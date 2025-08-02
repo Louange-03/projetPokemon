@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PokemonDbRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: PokemonDbRepository::class)]
+#[ApiResource]
 class PokemonDb
 {
     #[ORM\Id]
