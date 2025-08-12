@@ -1,45 +1,54 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import './style.css'; // <-- Import du fichier CSS
 
 export default function PokemonPage() {
-  const [pokemonList, setPokemonList] = useState([])
+  const [pokemonList, setPokemonList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8080/api/pokemon_dbs')
+    fetch('http://127.0.0.1:8000/api/pokemons')
       .then(res => res.json())
       .then(data => {
-        if (data.member) {
-          setPokemonList(data.member)
-        }
+        setPokemonList(data);
+        setLoading(false);
       })
-      .catch(err => console.error('Erreur lors du fetch :', err))
-  }, [])
+      .catch(err => {
+        console.error('Erreur lors du fetch :', err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return <p className="loading-text">Chargement des Pokémon...</p>;
+  }
+
+  if (pokemonList.length === 0) {
+    return <p className="loading-text">Aucun Pokémon trouvé.</p>;
+  }
 
   return (
-    <main className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Liste des Pokémon</h1>
-      <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+    <main className="main-container">
+      <h1 className="title">Liste des Pokémon</h1>
+      <ul className="pokemon-grid">
         {pokemonList.map(pokemon => (
-          <li
-            key={pokemon.id}
-            className="bg-white rounded-xl shadow p-4 text-center hover:shadow-lg transition"
-          >
+          <li key={pokemon.id} className="pokemon-card">
             <img
               src={pokemon.sprite}
               alt={pokemon.name}
-              className="w-24 h-24 mx-auto"
+              className="pokemon-image"
             />
-            <h2 className="text-lg font-semibold capitalize mt-2">{pokemon.name}</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="pokemon-name">{pokemon.name}</h2>
+            <p className="pokemon-id">
               ID: <strong>{pokemon.pokeApiId}</strong>
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="pokemon-types">
               Types: {pokemon.types.join(', ')}
             </p>
           </li>
         ))}
       </ul>
     </main>
-  )
+  );
 }
