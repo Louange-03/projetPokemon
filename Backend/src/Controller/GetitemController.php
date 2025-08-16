@@ -18,7 +18,7 @@ class GetitemController extends AbstractController
         $httpClient = HttpClient::create();
 
         try {
-            // Récupère tous les Pokémon disponibles (1281 max actuellement)
+            // je recupere tous les Pokémons disponibles 
             $response = $httpClient->request('GET', 'https://pokeapi.co/api/v2/pokemon?limit=100');
             $results = $response->toArray()['results'];
 
@@ -33,7 +33,7 @@ class GetitemController extends AbstractController
                 $sprite = $details['sprites']['front_default'] ?? null;
                 $types = array_map(fn($t) => $t['type']['name'], $details['types']);
 
-                // Vérifie si déjà présent dans la DB
+                // Vérification de la presence dans la DB
                 $existing = $em->getRepository(PokemonDb::class)->findOneBy(['pokeApiId' => $pokeID]);
                 if ($existing) {
                     continue;
